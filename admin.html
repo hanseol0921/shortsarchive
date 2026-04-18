@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>관리자 페이지</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body>
+
+    <!-- 비밀번호 화면 -->
+    <div id="auth-screen">
+      <h2>관리자 로그인</h2>
+      <input type="password" id="pw-input" placeholder="비밀번호 입력" />
+      <button id="pw-btn">확인</button>
+      <p id="pw-error" style="color:red; display:none;">비밀번호가 틀렸습니다</p>
+    </div>
+
+    <!-- 관리자 화면 (로그인 후 표시) -->
+    <div id="admin-screen" style="display:none;">
+      <h1>미분류 영상 관리</h1>
+      <p id="untagged-count"></p>
+      <button id="save-all-btn">전체 저장</button>
+      <div id="admin-card-container"></div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/admin.js"></script>
+  </body>
+</html>

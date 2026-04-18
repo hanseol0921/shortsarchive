@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>B 팬사이트</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+  <h1>보이넥스트도어 쇼츠 아카이브</h1>
+  <button id="admin-btn" onclick="location.href='admin.html'">관리자</button>
+
+<div id="filter-container">
+  <div id="member-filter">
+    <button class="filter-btn member-btn active" data-member="전체">전체</button>
+    <button class="filter-btn member-btn" data-member="성호">성호</button>
+    <button class="filter-btn member-btn" data-member="리우">리우</button>
+    <button class="filter-btn member-btn" data-member="명재현">명재현</button>
+    <button class="filter-btn member-btn" data-member="태산">태산</button>
+    <button class="filter-btn member-btn" data-member="이한">이한</button>
+    <button class="filter-btn member-btn" data-member="운학">운학</button>
+    <button class="filter-btn member-btn" data-member="미분류">미분류</button>
+  </div>
+
+  <!-- 멤버 버튼 바로 아래 항상 고정 -->
+  <div id="category-filter">
+    <div class="category-dropdown-wrapper">
+      <button id="category-dropdown-btn">
+        전체 <span class="arrow">▼</span>
+      </button>
+      <ul id="category-dropdown-list" class="dropdown-list hidden">
+        <li class="category-option active" data-category="전체">전체</li>
+        <li class="category-option" data-category="챌린지">챌린지</li>
+        <li class="category-option" data-category="비하인드">비하인드</li>
+        <li class="category-option" data-category="직캠">직캠</li>
+        <li class="category-option" data-category="댄스">댄스</li>
+        <li class="category-option" data-category="커버">커버</li>
+        <li class="category-option" data-category="기타">기타</li>
+      </ul>
+    </div>
+     <!-- 채널 출처 드롭다운 (새로 추가) -->
+  <div class="category-dropdown-wrapper">
+    <button id="channel-dropdown-btn">
+      전체 채널 <span class="arrow">▼</span>
+    </button>
+    <ul id="channel-dropdown-list" class="dropdown-list hidden">
+      <li class="channel-option active" data-channel="전체">전체 채널</li>
+      <!-- CONFIG.CHANNEL_NAMES에 추가한 채널들이 여기 들어감 -->
+      <!-- 지금은 공식만, 채널 추가할 때마다 여기도 추가 -->
+      <li class="channel-option" data-channel="official">BND 공식</li>
+    </ul>
+  </div>
+</div>
+
+  <div id="card-container"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
