@@ -7,62 +7,48 @@ document.addEventListener("DOMContentLoaded", async () => {
   const container = document.getElementById("card-container");
   container.innerHTML = `<p id="loading">영상 불러오는 중...</p>`;
 
-  const response = await fetch("./data/videos.json");
-  const rawVideos = await response.json();
-
-  let overrides = {};
   try {
-    const overridesResponse = await fetch("./data/overrides.json");
-    overrides = await overridesResponse.json();
-  } catch {
-    overrides = localStorage.getItem("overrides")
-      ? JSON.parse(localStorage.getItem("overrides"))
-      : {};
-  }
+    const response = await fetch("./data/videos.json");
+    const rawVideos = await response.json();
 
-  allVideos = rawVideos.map((v) => ({
-    ...v,
-    originalTitle: v.originalTitle || v.title,
-    members: overrides[v.id]?.members || v.members,
-    title: overrides[v.id]?.customTitle || v.title,
-    customTitle: overrides[v.id]?.customTitle || null,
-    category: overrides[v.id]?.category || v.category,
-  }));
+    let overrides = {};
+    try {
+      const overridesResponse = await fetch("./data/overrides.json");
+      overrides = await overridesResponse.json();
+    } catch {
+      overrides = localStorage.getItem("overrides")
+        ? JSON.parse(localStorage.getItem("overrides"))
+        : {};
+    }
 
-  container.innerHTML = "";
+    allVideos = rawVideos.map((v) => ({
+      ...v,
+      originalTitle: v.originalTitle || v.title,
+      members: overrides[v.id]?.members || v.members,
+      title: overrides[v.id]?.customTitle || v.title,
+      customTitle: overrides[v.id]?.customTitle || null,
+      category: overrides[v.id]?.category || v.category,
+    }));
 
-  if (allVideos.length === 0) {
+    container.innerHTML = "";
+
+    if (allVideos.length === 0) {
+      container.innerHTML = `<p>영상을 불러오지 못했습니다.</p>`;
+      return;
+    }
+
+    renderVideos(getFilteredVideos());
+    initFilters();
+    initModal();
+
+  } catch (error) {
+    console.error("데이터 로드 실패:", error);
     container.innerHTML = `<p>영상을 불러오지 못했습니다.</p>`;
-    return;
   }
-
-  renderVideos(getFilteredVideos());
-  initFilters();
-  initModal(); // ← 이게 있어야 함
 });
-  allVideos = rawVideos.map((v) => ({
-    ...v,
-    originalTitle: v.originalTitle || v.title,
-    members: overrides[v.id]?.members || v.members,
-    title: overrides[v.id]?.customTitle || v.title,
-    customTitle: overrides[v.id]?.customTitle || null,
-    category: overrides[v.id]?.category || v.category,
-  }));
 
-  container.innerHTML = "";
-
-  if (allVideos.length === 0) {
-    container.innerHTML = `<p>영상을 불러오지 못했습니다.</p>`;
-    return;
-  }
-
-  renderVideos(getFilteredVideos());
-  initFilters();
-  initModal();
-});
 
 function initFilters() {
-  // 멤버 버튼
   document.querySelectorAll(".member-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".member-btn")
@@ -73,7 +59,6 @@ function initFilters() {
     });
   });
 
-  // 카테고리 드롭다운
   initDropdown(
     "category-dropdown-btn",
     "category-dropdown-list",
@@ -82,7 +67,6 @@ function initFilters() {
     (value) => { selectedCategory = value; }
   );
 
-  // 채널 드롭다운
   initDropdown(
     "channel-dropdown-btn",
     "channel-dropdown-list",
@@ -93,11 +77,11 @@ function initFilters() {
 }
 
 
-// 드롭다운 초기화 공통 함수
-// 카테고리, 채널 드롭다운 둘 다 같은 구조라 함수로 묶음
 function initDropdown(btnId, listId, optionSelector, dataAttr, onSelect) {
   const btn = document.getElementById(btnId);
   const list = document.getElementById(listId);
+
+  if (!btn || !list) return;
 
   btn.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -127,6 +111,19 @@ function initDropdown(btnId, listId, optionSelector, dataAttr, onSelect) {
       onSelect(value);
       renderVideos(getFilteredVideos());
     });
+  });
+}
+
+
+function initModal() {
+  const closeBtn = document.getElementById("modal-close-btn");
+  const backdrop = document.querySelector(".modal-backdrop");
+
+  if (closeBtn) closeBtn.addEventListener("click", closePlayer);
+  if (backdrop) backdrop.addEventListener("click", closePlayer);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closePlayer();
   });
 }
 
@@ -183,7 +180,6 @@ function createCard(video) {
     </div>
   `;
 
-  // 카드 클릭 시 모달 열기
   card.addEventListener("click", () => openPlayer(video));
 
   return card;
@@ -199,7 +195,6 @@ function openPlayer(video) {
   const category = document.getElementById("modal-category");
   const channel = document.getElementById("modal-channel");
 
-  // 임베드 URL — autoplay=1로 바로 재생
   iframe.src = `https://www.youtube.com/embed/${video.id}?autoplay=1`;
   title.textContent = video.title;
   link.href = `https://www.youtube.com/watch?v=${video.id}`;
@@ -208,7 +203,7 @@ function openPlayer(video) {
   channel.textContent = video.channelLabel;
 
   modal.classList.remove("hidden");
-  document.body.style.overflow = "hidden"; // 배경 스크롤 방지
+  document.body.style.overflow = "hidden";
 }
 
 
@@ -216,23 +211,7 @@ function closePlayer() {
   const modal = document.getElementById("player-modal");
   const iframe = document.getElementById("player-iframe");
 
-  // src 비워야 영상 재생 멈춤
   iframe.src = "";
   modal.classList.add("hidden");
   document.body.style.overflow = "";
-}
-
-
-// 모달 닫기 이벤트들 — DOMContentLoaded 안의 initFilters() 호출 아래에 추가
-function initModal() {
-  document.getElementById("modal-close-btn")
-    .addEventListener("click", closePlayer);
-
-  document.querySelector(".modal-backdrop")
-    .addEventListener("click", closePlayer);
-
-  // ESC 키로도 닫기
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closePlayer();
-  });
 }
