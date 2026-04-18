@@ -187,3 +187,17 @@
   font-size: 13px;
   white-space: nowrap;  /* 이름 줄바꿈 방지 */
 }
+
+#download-btn {
+  padding: 10px 24px;
+  background: #333;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+#download-btn:hover {
+  background: #444;
+}

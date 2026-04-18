@@ -196,3 +196,44 @@ document.getElementById("save-all-btn").addEventListener("click", () => {
 
   alert(`저장 완료! ${Object.keys(overrides).length}개 영상 태깅됨`);
 });
+
+// 기존 save-all-btn 이벤트 아래에 추가
+document.getElementById("save-all-btn").addEventListener("click", () => {
+  const overrides = loadOverrides();
+
+  document.querySelectorAll(".admin-card").forEach((card) => {
+    const id = card.dataset.id;
+    const customTitle = card.querySelector(".custom-title-input").value.trim();
+    const checkedMembers = [...card.querySelectorAll(".member-checkbox:checked")]
+      .map((cb) => cb.value);
+    const finalMembers = checkedMembers.length > 0 ? checkedMembers : ["미분류"];
+    const categoryText = card.querySelector(".current-category").textContent;
+    const category = categoryText.replace("현재: ", "").trim();
+
+    overrides[id] = {
+      members: finalMembers,
+      customTitle: customTitle || null,
+      category,
+    };
+  });
+
+  saveOverrides(overrides);
+  alert(`저장 완료! ${Object.keys(overrides).length}개 영상 태깅됨`);
+});
+
+// 다운로드 버튼 이벤트 (새로 추가)
+document.getElementById("download-btn").addEventListener("click", () => {
+  const overrides = loadOverrides();
+
+  // JSON 파일로 다운로드
+  const blob = new Blob(
+    [JSON.stringify(overrides, null, 2)],
+    { type: "application/json" }
+  );
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "overrides.json";
+  a.click();
+  URL.revokeObjectURL(url);
+});

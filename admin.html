@@ -17,12 +17,15 @@
     </div>
 
     <!-- 관리자 화면 (로그인 후 표시) -->
-    <div id="admin-screen" style="display:none;">
-      <h1>미분류 영상 관리</h1>
-      <p id="untagged-count"></p>
-      <button id="save-all-btn">전체 저장</button>
-      <div id="admin-card-container"></div>
-    </div>
+   <div id="admin-screen" style="display:none;">
+  <h1>미분류 영상 관리</h1>
+  <p id="untagged-count"></p>
+  <div style="display:flex; gap:10px; margin-bottom:24px;">
+    <button id="save-all-btn">전체 저장</button>
+    <button id="download-btn">overrides.json 다운로드</button>
+  </div>
+  <div id="admin-card-container"></div>
+</div>
 
     <script src="js/config.js"></script>
     <script src="js/api.js"></script>

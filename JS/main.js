@@ -7,13 +7,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   const container = document.getElementById("card-container");
   container.innerHTML = `<p id="loading">영상 불러오는 중...</p>`;
 
-  // JSON 파일에서 읽기 (API 호출 없음)
+  // videos.json 읽기
   const response = await fetch("data/videos.json");
   const rawVideos = await response.json();
 
-  const overrides = localStorage.getItem("overrides")
-    ? JSON.parse(localStorage.getItem("overrides"))
-    : {};
+  // overrides.json 읽기 (없으면 localStorage fallback)
+  let overrides = {};
+  try {
+    const overridesResponse = await fetch("data/overrides.json");
+    overrides = await overridesResponse.json();
+  } catch {
+    // 파일 없으면 localStorage에서 읽기
+    overrides = localStorage.getItem("overrides")
+      ? JSON.parse(localStorage.getItem("overrides"))
+      : {};
+  }
 
   allVideos = rawVideos.map((v) => ({
     ...v,
@@ -34,7 +42,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderVideos(getFilteredVideos());
   initFilters();
 });
-
 
 function initFilters() {
   // 멤버 버튼
