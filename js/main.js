@@ -1,7 +1,14 @@
 let allVideos = [];
+let filteredVideos = []; // 현재 필터링된 영상 목록
+let currentIndex = 0;   // 모달에서 현재 보고있는 영상 인덱스
 let selectedMember = "전체";
 let selectedCategory = "전체";
 let selectedChannel = "전체";
+let searchQuery = "";
+
+// 스와이프 감지용 변수
+let touchStartX = 0;
+let touchEndX = 0;
 
 document.addEventListener("DOMContentLoaded", async () => {
   const container = document.getElementById("card-container");
@@ -37,8 +44,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    renderVideos(getFilteredVideos());
+    filteredVideos = getFilteredVideos();
+    renderVideos(filteredVideos);
     initFilters();
+    initSearch();
     initModal();
 
   } catch (error) {
@@ -48,6 +57,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 
+// 검색 초기화
+function initSearch() {
+  const input = document.getElementById("search-input");
+
+  input.addEventListener("input", () => {
+    searchQuery = input.value.trim().toLowerCase();
+    filteredVideos = getFilteredVideos();
+    renderVideos(filteredVideos);
+  });
+}
+
+
 function initFilters() {
   document.querySelectorAll(".member-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -55,7 +76,8 @@ function initFilters() {
         .forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
       selectedMember = btn.dataset.member;
-      renderVideos(getFilteredVideos());
+      filteredVideos = getFilteredVideos();
+      renderVideos(filteredVideos);
     });
   });
 
@@ -64,7 +86,11 @@ function initFilters() {
     "category-dropdown-list",
     ".category-option",
     "category",
-    (value) => { selectedCategory = value; }
+    (value) => {
+      selectedCategory = value;
+      filteredVideos = getFilteredVideos();
+      renderVideos(filteredVideos);
+    }
   );
 
   initDropdown(
@@ -72,7 +98,11 @@ function initFilters() {
     "channel-dropdown-list",
     ".channel-option",
     "channel",
-    (value) => { selectedChannel = value; }
+    (value) => {
+      selectedChannel = value;
+      filteredVideos = getFilteredVideos();
+      renderVideos(filteredVideos);
+    }
   );
 }
 
@@ -109,7 +139,6 @@ function initDropdown(btnId, listId, optionSelector, dataAttr, onSelect) {
       list.classList.add("hidden");
 
       onSelect(value);
-      renderVideos(getFilteredVideos());
     });
   });
 }
@@ -118,13 +147,58 @@ function initDropdown(btnId, listId, optionSelector, dataAttr, onSelect) {
 function initModal() {
   const closeBtn = document.getElementById("modal-close-btn");
   const backdrop = document.querySelector(".modal-backdrop");
+  const prevBtn = document.getElementById("prev-btn");
+  const nextBtn = document.getElementById("next-btn");
+  const modalPlayer = document.querySelector(".modal-player");
 
   if (closeBtn) closeBtn.addEventListener("click", closePlayer);
   if (backdrop) backdrop.addEventListener("click", closePlayer);
+  if (prevBtn) prevBtn.addEventListener("click", () => navigateVideo(-1));
+  if (nextBtn) nextBtn.addEventListener("click", () => navigateVideo(1));
 
+  // 키보드 이벤트
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closePlayer();
+    if (e.key === "ArrowLeft") navigateVideo(-1);
+    if (e.key === "ArrowRight") navigateVideo(1);
   });
+
+  // 스와이프 감지 — 모달 플레이어 영역에서만
+  if (modalPlayer) {
+    modalPlayer.addEventListener("touchstart", (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+
+    modalPlayer.addEventListener("touchend", (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    });
+  }
+}
+
+
+function handleSwipe() {
+  const diff = touchStartX - touchEndX;
+  // 50px 이상 스와이프해야 반응 (오작동 방지)
+  if (Math.abs(diff) < 50) return;
+
+  if (diff > 0) {
+    navigateVideo(1);  // 왼쪽으로 스와이프 → 다음
+  } else {
+    navigateVideo(-1); // 오른쪽으로 스와이프 → 이전
+  }
+}
+
+
+// 이전/다음 영상으로 이동
+function navigateVideo(direction) {
+  const newIndex = currentIndex + direction;
+
+  // 범위 벗어나면 무시
+  if (newIndex < 0 || newIndex >= filteredVideos.length) return;
+
+  currentIndex = newIndex;
+  updatePlayer(filteredVideos[currentIndex]);
 }
 
 
@@ -136,7 +210,13 @@ function getFilteredVideos() {
       || v.category === selectedCategory;
     const channelMatch = selectedChannel === "전체"
       || v.channelKey === selectedChannel;
-    return memberMatch && categoryMatch && channelMatch;
+
+    // 검색어 필터 — 제목, 멤버 이름에서 검색
+    const searchMatch = searchQuery === ""
+      || v.title.toLowerCase().includes(searchQuery)
+      || v.members.some((m) => m.toLowerCase().includes(searchQuery));
+
+    return memberMatch && categoryMatch && channelMatch && searchMatch;
   });
 }
 
@@ -150,13 +230,13 @@ function renderVideos(videos) {
     return;
   }
 
-  videos.forEach((video) => {
-    container.appendChild(createCard(video));
+  videos.forEach((video, index) => {
+    container.appendChild(createCard(video, index));
   });
 }
 
 
-function createCard(video) {
+function createCard(video, index) {
   const card = document.createElement("div");
   card.className = "card";
 
@@ -180,7 +260,11 @@ function createCard(video) {
     </div>
   `;
 
-  card.addEventListener("click", () => openPlayer(video));
+  // index 저장해서 모달에서 현재 위치 파악
+  card.addEventListener("click", () => {
+    currentIndex = index;
+    openPlayer(video);
+  });
 
   return card;
 }
@@ -188,12 +272,22 @@ function createCard(video) {
 
 function openPlayer(video) {
   const modal = document.getElementById("player-modal");
+  modal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+  updatePlayer(video);
+}
+
+
+// 플레이어 내용 업데이트 (이전/다음 이동 시에도 사용)
+function updatePlayer(video) {
   const iframe = document.getElementById("player-iframe");
   const title = document.getElementById("modal-title");
   const link = document.getElementById("modal-youtube-link");
   const member = document.getElementById("modal-member");
   const category = document.getElementById("modal-category");
   const channel = document.getElementById("modal-channel");
+  const prevBtn = document.getElementById("prev-btn");
+  const nextBtn = document.getElementById("next-btn");
 
   iframe.src = `https://www.youtube.com/embed/${video.id}?autoplay=1`;
   title.textContent = video.title;
@@ -202,15 +296,19 @@ function openPlayer(video) {
   category.textContent = video.category;
   channel.textContent = video.channelLabel;
 
-  modal.classList.remove("hidden");
-  document.body.style.overflow = "hidden";
+  // 첫 번째 영상이면 이전 버튼 흐리게
+  prevBtn.style.opacity = currentIndex === 0 ? "0.3" : "1";
+  prevBtn.style.pointerEvents = currentIndex === 0 ? "none" : "auto";
+
+  // 마지막 영상이면 다음 버튼 흐리게
+  nextBtn.style.opacity = currentIndex === filteredVideos.length - 1 ? "0.3" : "1";
+  nextBtn.style.pointerEvents = currentIndex === filteredVideos.length - 1 ? "none" : "auto";
 }
 
 
 function closePlayer() {
   const modal = document.getElementById("player-modal");
   const iframe = document.getElementById("player-iframe");
-
   iframe.src = "";
   modal.classList.add("hidden");
   document.body.style.overflow = "";

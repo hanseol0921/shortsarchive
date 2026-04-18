@@ -2,89 +2,104 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <title>B 팬사이트</title>
+    <title>보이넥스트도어 쇼츠 아카이브</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-  <h1>보이넥스트도어 쇼츠 아카이브</h1>
-  <button id="admin-btn" onclick="location.href='admin.html'">관리자</button>
+  <header>
+    <h1>보이넥스트도어 쇼츠 아카이브</h1>
+    <button id="admin-btn" onclick="location.href='admin.html'">관리자</button>
+  </header>
 
-<div id="filter-container">
-  <div id="member-filter">
-    <button class="filter-btn member-btn active" data-member="전체">전체</button>
-    <button class="filter-btn member-btn" data-member="성호">성호</button>
-    <button class="filter-btn member-btn" data-member="리우">리우</button>
-    <button class="filter-btn member-btn" data-member="명재현">명재현</button>
-    <button class="filter-btn member-btn" data-member="태산">태산</button>
-    <button class="filter-btn member-btn" data-member="이한">이한</button>
-    <button class="filter-btn member-btn" data-member="운학">운학</button>
-    <button class="filter-btn member-btn" data-member="미분류">미분류</button>
+  <!-- 검색창 -->
+  <div id="search-container">
+    <input
+      type="text"
+      id="search-input"
+      placeholder="영상 제목, 멤버 이름으로 검색..."
+    />
   </div>
 
-  <!-- 멤버 버튼 바로 아래 항상 고정 -->
-  <div id="category-filter">
-    <div class="category-dropdown-wrapper">
-      <button id="category-dropdown-btn">
-        전체 <span class="arrow">▼</span>
-      </button>
-      <ul id="category-dropdown-list" class="dropdown-list hidden">
-        <li class="category-option active" data-category="전체">전체</li>
-        <li class="category-option" data-category="챌린지">챌린지</li>
-        <li class="category-option" data-category="비하인드">비하인드</li>
-        <li class="category-option" data-category="직캠">직캠</li>
-        <li class="category-option" data-category="댄스">댄스</li>
-        <li class="category-option" data-category="커버">커버</li>
-        <li class="category-option" data-category="기타">기타</li>
-      </ul>
+  <div id="filter-container">
+    <div id="member-filter">
+      <button class="filter-btn member-btn active" data-member="전체">전체</button>
+      <button class="filter-btn member-btn" data-member="성호">성호</button>
+      <button class="filter-btn member-btn" data-member="리우">리우</button>
+      <button class="filter-btn member-btn" data-member="명재현">명재현</button>
+      <button class="filter-btn member-btn" data-member="태산">태산</button>
+      <button class="filter-btn member-btn" data-member="이한">이한</button>
+      <button class="filter-btn member-btn" data-member="운학">운학</button>
+      <button class="filter-btn member-btn" data-member="미분류">미분류</button>
     </div>
-     <!-- 채널 출처 드롭다운 (새로 추가) -->
-  <div class="category-dropdown-wrapper">
-    <button id="channel-dropdown-btn">
-      전체 채널 <span class="arrow">▼</span>
-    </button>
-    <ul id="channel-dropdown-list" class="dropdown-list hidden">
-      <li class="channel-option active" data-channel="전체">전체 채널</li>
-      <!-- CONFIG.CHANNEL_NAMES에 추가한 채널들이 여기 들어감 -->
-      <!-- 지금은 공식만, 채널 추가할 때마다 여기도 추가 -->
-      <li class="channel-option" data-channel="official">BND 공식</li>
-    </ul>
+
+    <div id="category-filter">
+      <div class="category-dropdown-wrapper">
+        <button id="category-dropdown-btn">
+          전체 <span class="arrow">▼</span>
+        </button>
+        <ul id="category-dropdown-list" class="dropdown-list hidden">
+          <li class="category-option active" data-category="전체">전체</li>
+          <li class="category-option" data-category="챌린지">챌린지</li>
+          <li class="category-option" data-category="비하인드">비하인드</li>
+          <li class="category-option" data-category="직캠">직캠</li>
+          <li class="category-option" data-category="댄스">댄스</li>
+          <li class="category-option" data-category="커버">커버</li>
+          <li class="category-option" data-category="기타">기타</li>
+        </ul>
+      </div>
+
+      <div class="category-dropdown-wrapper">
+        <button id="channel-dropdown-btn">
+          전체 채널 <span class="arrow">▼</span>
+        </button>
+        <ul id="channel-dropdown-list" class="dropdown-list hidden">
+          <li class="channel-option active" data-channel="전체">전체 채널</li>
+          <li class="channel-option" data-channel="official">BND 공식</li>
+        </ul>
+      </div>
+    </div>
   </div>
-</div>
 
   <div id="card-container"></div>
 
-  <!-- 영상 플레이어 모달 -->
-<!-- card-container 아래에 있어야 함 -->
-<div id="player-modal" class="modal hidden">
-  <div class="modal-backdrop"></div>
-  <div class="modal-content">
-    <div class="modal-header">
-      <p id="modal-title"></p>
-      <div class="modal-buttons">
-        <a id="modal-youtube-link" href="" target="_blank">유튜브에서 보기 ↗</a>
-        <button id="modal-close-btn">✕</button>
+  <!-- 모달 — 화살표 버튼 추가 -->
+  <div id="player-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+
+    <!-- 이전 버튼 -->
+    <button class="nav-btn" id="prev-btn">&#10094;</button>
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <p id="modal-title"></p>
+        <div class="modal-buttons">
+          <a id="modal-youtube-link" href="" target="_blank">유튜브에서 보기 ↗</a>
+          <button id="modal-close-btn">✕</button>
+        </div>
+      </div>
+      <div class="modal-player">
+        <iframe
+          id="player-iframe"
+          src=""
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write;
+                 encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+      <div class="modal-info">
+        <span id="modal-member"></span>
+        <span id="modal-category"></span>
+        <span id="modal-channel"></span>
       </div>
     </div>
-    <div class="modal-player">
-      <iframe
-        id="player-iframe"
-        src=""
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write;
-               encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-      ></iframe>
-    </div>
-    <div class="modal-info">
-      <span id="modal-member"></span>
-      <span id="modal-category"></span>
-      <span id="modal-channel"></span>
-    </div>
+
+    <!-- 다음 버튼 -->
+    <button class="nav-btn" id="next-btn">&#10095;</button>
   </div>
-</div>
 
   <script src="./js/config.js"></script>
-<script src="./js/api.js"></script>
-<script src="./js/main.js"></script>
-</body>
+  <script src="./js/api.js"></script>
+  <script src="./js/main.js"></script>
+  </body>
 </html>

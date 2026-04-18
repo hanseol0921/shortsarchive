@@ -450,3 +450,56 @@ header {
 .card-thumbnail:hover .play-overlay {
   opacity: 1;
 }
+
+/* 검색창 */
+#search-container {
+  margin-bottom: 16px;
+}
+
+#search-input {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 20px;
+  border: 1px solid #444;
+  background: #1a1a1a;
+  color: white;
+  font-size: 14px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+#search-input:focus {
+  border-color: #888;
+}
+
+#search-input::placeholder {
+  color: #555;
+}
+
+/* 화살표 버튼 */
+.nav-btn {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  font-size: 24px;
+  padding: 16px 12px;
+  cursor: pointer;
+  border-radius: 8px;
+  z-index: 1002;
+  transition: background 0.2s;
+}
+
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+#prev-btn {
+  left: 12px;
+}
+
+#next-btn {
+  right: 12px;
+}
