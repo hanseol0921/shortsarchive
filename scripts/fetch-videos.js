@@ -23,7 +23,17 @@ const CONFIG = {
     { name: "댄스", keywords: ["dance", "댄스"] },
     { name: "커버", keywords: ["cover", "커버"] },
   ],
-  EXCLUDED_VIDEO_IDS: [],
+  EXCLUDED_VIDEO_IDS: [
+    "nAd1x4ml3rw", // 태산 CMR
+    "E1A5ZkZZ_WI", // 리우 마잭
+    "nxWDWgnOyx0",// 명재현 브라질리언 펑크
+    "vWaX4BgfjLA", // 이한 재즈
+    "YEQ1Dyk66ZE", // 성호 톡식틸앤
+    "67UPb0UawjE", // 운학 끼좀 부리지마
+
+    "n6CKdrTF3so", // 오알럽 일본분이랑 같이부른 그거
+    "8D8lyiMOr6g", // 세이치즈
+  ],
 };
 
 function cleanTitle(title) {

@@ -53,6 +53,37 @@
 
   <div id="card-container"></div>
 
+  <!-- 영상 플레이어 모달 -->
+<div id="player-modal" class="modal hidden">
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <p id="modal-title"></p>
+      <div class="modal-buttons">
+        <a id="modal-youtube-link" href="" target="_blank">
+          유튜브에서 보기 ↗
+        </a>
+        <button id="modal-close-btn">✕</button>
+      </div>
+    </div>
+    <div class="modal-player">
+      <iframe
+        id="player-iframe"
+        src=""
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write;
+               encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+    </div>
+    <div class="modal-info">
+      <span id="modal-member"></span>
+      <span id="modal-category"></span>
+      <span id="modal-channel"></span>
+    </div>
+  </div>
+</div>
+
   <script src="./js/config.js"></script>
 <script src="./js/api.js"></script>
 <script src="./js/main.js"></script>

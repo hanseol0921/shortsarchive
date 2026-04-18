@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // videos.json 읽기
   const response = await fetch("./data/videos.json");
   const rawVideos = await response.json();
+  
 
   // overrides.json 읽기 (없으면 localStorage fallback)
   let overrides = {};
@@ -41,6 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   renderVideos(getFilteredVideos());
   initFilters();
+  initModal();
 });
 
 function initFilters() {
@@ -148,9 +150,10 @@ function createCard(video) {
   const hasCustomTitle = video.customTitle !== null;
 
   card.innerHTML = `
-    <a href="https://www.youtube.com/watch?v=${video.id}" target="_blank">
+    <div class="card-thumbnail">
       <img src="${video.thumbnail}" alt="${video.title}" />
-    </a>
+      <div class="play-overlay">▶</div>
+    </div>
     <div class="card-info">
       <p class="card-title">${video.title}</p>
       ${hasCustomTitle
@@ -164,5 +167,56 @@ function createCard(video) {
     </div>
   `;
 
+  // 카드 클릭 시 모달 열기
+  card.addEventListener("click", () => openPlayer(video));
+
   return card;
+}
+
+
+function openPlayer(video) {
+  const modal = document.getElementById("player-modal");
+  const iframe = document.getElementById("player-iframe");
+  const title = document.getElementById("modal-title");
+  const link = document.getElementById("modal-youtube-link");
+  const member = document.getElementById("modal-member");
+  const category = document.getElementById("modal-category");
+  const channel = document.getElementById("modal-channel");
+
+  // 임베드 URL — autoplay=1로 바로 재생
+  iframe.src = `https://www.youtube.com/embed/${video.id}?autoplay=1`;
+  title.textContent = video.title;
+  link.href = `https://www.youtube.com/watch?v=${video.id}`;
+  member.textContent = video.members.join(" · ");
+  category.textContent = video.category;
+  channel.textContent = video.channelLabel;
+
+  modal.classList.remove("hidden");
+  document.body.style.overflow = "hidden"; // 배경 스크롤 방지
+}
+
+
+function closePlayer() {
+  const modal = document.getElementById("player-modal");
+  const iframe = document.getElementById("player-iframe");
+
+  // src 비워야 영상 재생 멈춤
+  iframe.src = "";
+  modal.classList.add("hidden");
+  document.body.style.overflow = "";
+}
+
+
+// 모달 닫기 이벤트들 — DOMContentLoaded 안의 initFilters() 호출 아래에 추가
+function initModal() {
+  document.getElementById("modal-close-btn")
+    .addEventListener("click", closePlayer);
+
+  document.querySelector(".modal-backdrop")
+    .addEventListener("click", closePlayer);
+
+  // ESC 키로도 닫기
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closePlayer();
+  });
 }

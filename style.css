@@ -299,3 +299,154 @@ header {
   position: relative;
   display: inline-block;
 }
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.modal-content {
+  position: relative;
+  z-index: 1001;
+  width: 90%;
+  max-width: 420px; /* 쇼츠 세로 비율에 맞게 */
+  background: #1a1a1a;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+}
+
+#modal-title {
+  font-size: 13px;
+  color: #ccc;
+  margin: 0;
+  flex: 1;
+  /* 한 줄 말줄임 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modal-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+#modal-youtube-link {
+  font-size: 12px;
+  color: #aaa;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+#modal-youtube-link:hover {
+  color: white;
+}
+
+#modal-close-btn {
+  background: transparent;
+  border: none;
+  color: #aaa;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+#modal-close-btn:hover {
+  color: white;
+}
+
+.modal-player {
+  width: 100%;
+  /* 쇼츠 세로 비율 9:16 */
+  aspect-ratio: 9 / 16;
+  background: black;
+}
+
+#player-iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.modal-info {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  flex-wrap: wrap;
+}
+
+#modal-member {
+  font-size: 12px;
+  color: #ccc;
+}
+
+#modal-category,
+#modal-channel {
+  font-size: 11px;
+  color: #777;
+  background: #2a2a2a;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.card-thumbnail {
+  position: relative;
+  cursor: pointer;
+}
+
+.card-thumbnail img {
+  width: 100%;
+  display: block;
+  transition: opacity 0.2s;
+}
+
+.card-thumbnail:hover img {
+  opacity: 0.7;
+}
+
+.play-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 36px;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  text-shadow: 0 0 10px rgba(0,0,0,0.8);
+}
+
+.card-thumbnail:hover .play-overlay {
+  opacity: 1;
+}
