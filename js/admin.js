@@ -1,4 +1,4 @@
-const ADMIN_PASSWORD = "여기에비밀번호";
+const ADMIN_PASSWORD = "1800213";
 const MEMBER_LIST = ["성호", "리우", "명재현", "태산", "이한", "운학"];
 const CATEGORY_LIST = ["챌린지", "비하인드", "직캠", "댄스", "커버", "기타"];
 
