@@ -34,16 +34,29 @@ async function loadAdminPage() {
   const container = document.getElementById("admin-card-container");
   container.innerHTML = "<p>영상 불러오는 중...</p>";
 
-  const videos = await fetchAllChannels();
+  // fetchAllChannels() 대신 videos.json에서 읽기
+  const response = await fetch("./data/videos.json");
+  const videos = await response.json();
+
   const overrides = loadOverrides();
 
   const applied = videos.map((v) => ({
     ...v,
-    originalTitle: v.title,
+    originalTitle: v.originalTitle || v.title,
     members: overrides[v.id]?.members || v.members,
     customTitle: overrides[v.id]?.customTitle || "",
     category: overrides[v.id]?.category || v.category,
   }));
+
+  // 나머지 코드는 그대로 유지
+  const sorted = [
+    ...applied.filter((v) => v.members.includes("미분류")),
+    ...applied.filter((v) => !v.members.includes("미분류")),
+  ];
+
+  const untaggedCount = applied.filter((v) => v.members.includes("미분류")).length;
+  document.getElementById("untagged-count").textContent =
+    `미분류: ${untaggedCount}개 / 전체: ${applied.length}개`;
 
   // 미분류 먼저
   const sorted = [
