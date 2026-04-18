@@ -17,7 +17,7 @@ const CONFIG = {
   },
   CHANNEL_NAMES: {
     official: "BND 공식",
-    DAYOUNG: "다영"
+    DAYOUNG: "다영",
     LESSERAFIM: "르세라핌"
   },
   CATEGORIES: [
