@@ -116,6 +116,12 @@ async function getVideosFromPlaylist(playlistId) {
       + (nextPageToken ? `&pageToken=${nextPageToken}` : "");
     const res = await fetch(url);
     const data = await res.json();
+    console.log("API 응답:", JSON.stringify(data).slice(0, 300)); // ← 추가
+    if (!data.items) {
+      console.error("items 없음, 응답:", data);
+      break;
+    }
+
     allItems = [...allItems, ...data.items];
     nextPageToken = data.nextPageToken || null;
     console.log(`  ${allItems.length}개 수집 중...`);
