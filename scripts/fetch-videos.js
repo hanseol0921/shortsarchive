@@ -11,17 +11,19 @@ const API_KEY = process.env.YOUTUBE_API_KEY;
 const CONFIG = {
   CHANNELS: {
     official: "UChhKBlh_wvspTh5n4mL0b5g",
+    DAYOUNG: "UC2LP07vrf6V_k6eFIVz37Ow",   // 예: Universe 채널
+    LESSERAFIM: "UCs-QBT4qkj_YiQw1ZntDO3g",       // 예: Mnet 채널
     // 추가 채널 있으면 여기도 동일하게
   },
   CHANNEL_NAMES: {
     official: "BND 공식",
+    DAYOUNG: "다영"
+    LESSERAFIM: "르세라핌"
   },
   CATEGORIES: [
     { name: "챌린지", keywords: ["챌린지", "challenge"] },
     { name: "비하인드", keywords: ["비하인드", "behind"] },
-    { name: "직캠", keywords: ["직캠", "fancam", "focus"] },
     { name: "댄스", keywords: ["dance", "댄스"] },
-    { name: "커버", keywords: ["cover", "커버"] },
   ],
   EXCLUDED_VIDEO_IDS: [
     "nAd1x4ml3rw", // 태산 CMR
@@ -48,12 +50,12 @@ function cleanTitle(title) {
 function detectMember(title, description) {
   const text = (title + " " + description).toLowerCase();
   const members = [
-    { name: "성호", keywords: ["성호", "sungho", "sung ho"] },
-    { name: "리우", keywords: ["리우", "riwoo", "ri woo"] },
-    { name: "명재현", keywords: ["명재현", "재현", "jaehyun", "jae hyun"] },
-    { name: "태산", keywords: ["태산", "taesan", "tae san"] },
-    { name: "이한", keywords: ["이한", "leehan", "lee han"] },
-    { name: "운학", keywords: ["운학", "woonhak", "woon hak"] },
+    { name: "성호", keywords: ["성호", "SUNGHO"] },
+    { name: "리우", keywords: ["리우", "RIWOO"] },
+    { name: "명재현", keywords: ["명재현", "JAEHYUN"] },
+    { name: "태산", keywords: ["태산", "TAESAN"] },
+    { name: "이한", keywords: ["이한", "LEEHAN"] },
+    { name: "운학", keywords: ["운학", "WOONHAK"] },
   ];
   const matched = [];
   for (const member of members) {
@@ -88,10 +90,10 @@ function parseDuration(duration) {
 function isBNDRelated(title, description) {
   const text = (title + " " + description).toLowerCase();
   const keywords = [
-    "boynextdoor", "boy next door", "보이넥스트도어", "bnd",
-    "성호", "sungho", "리우", "riwoo",
-    "명재현", "jaehyun", "태산", "taesan",
-    "이한", "leehan", "운학", "woonhak",
+    "boynextdoor", "BOYNEXTDOOR", "보이넥스트도어", "bnd",
+    "성호", "SUNGHO", "리우", "RIWOO",
+    "명재현", "JAEHYUN", "태산", "TAESAN",
+    "이한", "LEEHAN", "운학", "WOONHAK",
   ];
   return keywords.some((k) => text.includes(k));
 }
