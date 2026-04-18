@@ -7,13 +7,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   const container = document.getElementById("card-container");
   container.innerHTML = `<p id="loading">영상 불러오는 중...</p>`;
 
-  allVideos = await fetchAllChannels();
+  // JSON 파일에서 읽기 (API 호출 없음)
+  const response = await fetch("data/videos.json");
+  const rawVideos = await response.json();
 
   const overrides = localStorage.getItem("overrides")
     ? JSON.parse(localStorage.getItem("overrides"))
     : {};
 
-  allVideos = allVideos.map((v) => ({
+  allVideos = rawVideos.map((v) => ({
     ...v,
     originalTitle: v.originalTitle || v.title,
     members: overrides[v.id]?.members || v.members,

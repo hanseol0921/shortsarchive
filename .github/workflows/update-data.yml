@@ -1,0 +1,38 @@
+name: Update Video Data
+
+on:
+  # 매일 한국시간 오전 6시 자동 실행 (UTC 21:00 = KST 06:00)
+  schedule:
+    - cron: "0 21 * * *"
+  # GitHub Actions 탭에서 수동 실행도 가능하게
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 저장소 코드 가져오기
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Node.js 설치
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # 스크립트 실행 (API 키는 Secrets에서 환경변수로 주입)
+      - name: Fetch YouTube Data
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: node scripts/fetch-videos.js
+
+      # 변경된 videos.json을 자동으로 commit & push
+      - name: Commit and Push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add data/videos.json
+          git diff --staged --quiet || git commit -m "Update video data"
+          git push
