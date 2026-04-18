@@ -8,13 +8,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   container.innerHTML = `<p id="loading">영상 불러오는 중...</p>`;
 
   // videos.json 읽기
-  const response = await fetch("data/videos.json");
+  const response = await fetch("./data/videos.json");
   const rawVideos = await response.json();
 
   // overrides.json 읽기 (없으면 localStorage fallback)
   let overrides = {};
   try {
-    const overridesResponse = await fetch("data/overrides.json");
+    const overridesResponse = await fetch("./data/overrides.json");
     overrides = await overridesResponse.json();
   } catch {
     // 파일 없으면 localStorage에서 읽기
