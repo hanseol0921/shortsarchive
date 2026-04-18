@@ -7,23 +7,39 @@ document.addEventListener("DOMContentLoaded", async () => {
   const container = document.getElementById("card-container");
   container.innerHTML = `<p id="loading">영상 불러오는 중...</p>`;
 
-  // videos.json 읽기
   const response = await fetch("./data/videos.json");
   const rawVideos = await response.json();
-  
 
-  // overrides.json 읽기 (없으면 localStorage fallback)
   let overrides = {};
   try {
     const overridesResponse = await fetch("./data/overrides.json");
     overrides = await overridesResponse.json();
   } catch {
-    // 파일 없으면 localStorage에서 읽기
     overrides = localStorage.getItem("overrides")
       ? JSON.parse(localStorage.getItem("overrides"))
       : {};
   }
 
+  allVideos = rawVideos.map((v) => ({
+    ...v,
+    originalTitle: v.originalTitle || v.title,
+    members: overrides[v.id]?.members || v.members,
+    title: overrides[v.id]?.customTitle || v.title,
+    customTitle: overrides[v.id]?.customTitle || null,
+    category: overrides[v.id]?.category || v.category,
+  }));
+
+  container.innerHTML = "";
+
+  if (allVideos.length === 0) {
+    container.innerHTML = `<p>영상을 불러오지 못했습니다.</p>`;
+    return;
+  }
+
+  renderVideos(getFilteredVideos());
+  initFilters();
+  initModal(); // ← 이게 있어야 함
+});
   allVideos = rawVideos.map((v) => ({
     ...v,
     originalTitle: v.originalTitle || v.title,
