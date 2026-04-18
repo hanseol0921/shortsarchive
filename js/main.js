@@ -12,6 +12,25 @@ let touchEndX = 0;
 let touchStartY = 0;  // ← 추가
 let touchEndY = 0;
 
+// 관리자 페이지 단축키 — Shift + A + D 동시에
+const keysPressed = new Set();
+
+document.addEventListener("keydown", (e) => {
+  keysPressed.add(e.key.toLowerCase());
+
+  if (
+    keysPressed.has("shift") &&
+    keysPressed.has("a") &&
+    keysPressed.has("d")
+  ) {
+    location.href = "./admin.html";
+  }
+});
+
+document.addEventListener("keyup", (e) => {
+  keysPressed.delete(e.key.toLowerCase());
+});
+
 document.addEventListener("DOMContentLoaded", async () => {
   const container = document.getElementById("card-container");
   container.innerHTML = `<p id="loading">영상 불러오는 중...</p>`;
