@@ -503,3 +503,27 @@ header {
 #next-btn {
   right: 12px;
 }
+
+.modal-player {
+  position: relative; /* 기존에 없으면 추가 */
+}
+
+#swipe-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  /* 평소엔 완전 투명, 터치만 감지 */
+  background: transparent;
+  /* 클릭은 iframe으로 통과시키고 터치만 잡기 */
+  pointer-events: none;
+}
+
+/* 모바일에서만 스와이프 레이어 활성화 */
+@media (hover: none) {
+  #swipe-layer {
+    pointer-events: auto;
+  }
+}

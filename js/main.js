@@ -9,6 +9,8 @@ let searchQuery = "";
 // 스와이프 감지용 변수
 let touchStartX = 0;
 let touchEndX = 0;
+let touchStartY = 0;  // ← 추가
+let touchEndY = 0;
 
 document.addEventListener("DOMContentLoaded", async () => {
   const container = document.getElementById("card-container");
@@ -60,11 +62,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 // 검색 초기화
 function initSearch() {
   const input = document.getElementById("search-input");
+  if (!input) return;
 
+  // 실시간 검색 (타이핑할 때마다)
   input.addEventListener("input", () => {
     searchQuery = input.value.trim().toLowerCase();
     filteredVideos = getFilteredVideos();
     renderVideos(filteredVideos);
+  });
+
+  // 엔터키 검색
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      searchQuery = input.value.trim().toLowerCase();
+      filteredVideos = getFilteredVideos();
+      renderVideos(filteredVideos);
+      input.blur(); // 키보드 내리기 (모바일)
+    }
   });
 }
 
@@ -149,7 +163,7 @@ function initModal() {
   const backdrop = document.querySelector(".modal-backdrop");
   const prevBtn = document.getElementById("prev-btn");
   const nextBtn = document.getElementById("next-btn");
-  const modalPlayer = document.querySelector(".modal-player");
+  const swipeLayer = document.getElementById("swipe-layer");
 
   if (closeBtn) closeBtn.addEventListener("click", closePlayer);
   if (backdrop) backdrop.addEventListener("click", closePlayer);
@@ -163,29 +177,34 @@ function initModal() {
     if (e.key === "ArrowRight") navigateVideo(1);
   });
 
-  // 스와이프 감지 — 모달 플레이어 영역에서만
-  if (modalPlayer) {
-    modalPlayer.addEventListener("touchstart", (e) => {
+  // 스와이프 감지 — iframe 위 투명 레이어에서
+  if (swipeLayer) {
+    swipeLayer.addEventListener("touchstart", (e) => {
       touchStartX = e.changedTouches[0].screenX;
-    });
+      touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
 
-    modalPlayer.addEventListener("touchend", (e) => {
+    swipeLayer.addEventListener("touchend", (e) => {
       touchEndX = e.changedTouches[0].screenX;
+      touchEndY = e.changedTouches[0].screenY;
       handleSwipe();
-    });
+    }, { passive: true });
   }
 }
 
-
 function handleSwipe() {
-  const diff = touchStartX - touchEndX;
-  // 50px 이상 스와이프해야 반응 (오작동 방지)
-  if (Math.abs(diff) < 50) return;
+  const diffX = touchStartX - touchEndX;
+  const diffY = Math.abs(touchStartY - touchEndY);
 
-  if (diff > 0) {
-    navigateVideo(1);  // 왼쪽으로 스와이프 → 다음
+  // 세로 움직임이 가로보다 크면 스크롤로 간주, 무시
+  if (diffY > Math.abs(diffX)) return;
+  // 50px 이상 가로 스와이프해야 반응
+  if (Math.abs(diffX) < 50) return;
+
+  if (diffX > 0) {
+    navigateVideo(1);   // 왼쪽 스와이프 → 다음
   } else {
-    navigateVideo(-1); // 오른쪽으로 스와이프 → 이전
+    navigateVideo(-1);  // 오른쪽 스와이프 → 이전
   }
 }
 

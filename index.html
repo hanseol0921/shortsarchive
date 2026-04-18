@@ -78,15 +78,17 @@
         </div>
       </div>
       <div class="modal-player">
-        <iframe
-          id="player-iframe"
-          src=""
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write;
-                 encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-        ></iframe>
-      </div>
+  <!-- 스와이프 감지용 투명 레이어 -->
+  <div id="swipe-layer"></div>
+  <iframe
+    id="player-iframe"
+    src=""
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write;
+           encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+  ></iframe>
+</div>
       <div class="modal-info">
         <span id="modal-member"></span>
         <span id="modal-category"></span>
